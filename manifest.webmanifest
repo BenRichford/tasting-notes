@@ -1,0 +1,14 @@
+{
+  "name": "Tasting Notes",
+  "short_name": "Tasting",
+  "description": "Wine tasting notes, saved to your Google Drive.",
+  "display": "standalone",
+  "scope": "./",
+  "background_color": "#faf7f5",
+  "theme_color": "#6b1f2e",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

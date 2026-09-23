@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tasting Notes</title>
+<meta name="theme-color" content="#6b1f2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tasting">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{--wine:#6b1f2e;--wine-2:#8c2d40;--ink:#241a1c;--muted:#7a6d70;--line:#e8dfe0;--bg:#faf7f5;--card:#fff;--gold:#a8791c;--ai:#fff4d6;--ok:#2f6b3a}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+html{background:var(--wine)}
+body{min-height:100vh;font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg);-webkit-text-size-adjust:100%}
+header{position:sticky;top:0;z-index:5;background:var(--wine);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;display:flex;align-items:center;gap:10px}
+header h1{font:600 20px/1.2 Georgia,"Times New Roman",serif;margin:0;flex:1;letter-spacing:.2px}
+button,.btn,.btn-ghost,.btn-light,.btn-danger{font:inherit;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn{background:var(--wine);color:#fff}
+.btn-light{background:#fff;color:var(--wine);font-weight:600}
+.btn-ghost{background:#fff;color:var(--wine);border:1px solid var(--line)}
+.btn-danger{background:transparent;color:#b3261e;border:1px solid #f0c9c6;width:100%;margin-top:8px}
+.hbtn{background:transparent;color:#fff;font-size:30px;line-height:1;padding:0 8px 4px}
+main{max-width:640px;margin:0 auto;padding:12px 16px calc(96px + env(safe-area-inset-bottom))}
+.view{display:none}.view.on{display:block}
+.banner{background:#fff4d6;border:1px solid #f0dca2;border-radius:10px;padding:10px 12px;font-size:14px;margin:0 0 12px}
+.banner button{padding:4px 10px;font-size:14px;margin-left:6px;background:#fff;border:1px solid #e2cf95;color:var(--ink)}
+.bar{font-size:14px;text-align:center;padding:8px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.bar button{padding:3px 10px;font-size:13px;background:#fff;border:1px solid var(--line);color:var(--wine)}
+#mockBar{background:#fff4d6}
+#syncBar{background:#f1ecee}
+#syncBar.off{background:#fde8e6;color:#8a1c14}
+.controls{display:flex;gap:8px}
+input,select,textarea{font:inherit;font-size:16px;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+textarea{resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--wine-2);outline-offset:-1px;border-color:transparent}
+#sort{width:auto}
+.count{color:var(--muted);font-size:13px;margin:10px 2px 4px}
+.group{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:600;color:var(--wine);text-transform:uppercase;letter-spacing:.5px;margin:18px 2px 6px}
+.group span:last-child{color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
+.card{width:100%;text-align:left;justify-content:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 8px;display:flex;gap:12px;align-items:center;color:inherit}
+.dot{width:10px;align-self:stretch;border-radius:5px;flex:none}
+.c-red{background:#7a2233}.c-white{background:#e2cf72}.c-rose{background:#eb9aa3}.c-sparkling{background:#d9c982}
+.c-sweet{background:#d99a2b}.c-fortified{background:#7a3a20}.c-orange{background:#e0913f}.c-none{background:#ddd3d5}
+.ci{display:flex;flex-direction:column;min-width:0;gap:1px;flex:1}
+.pr{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cu{font-family:Georgia,serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meta{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pend{color:#8a5a00;font-size:12px}
+.score{flex:none;min-width:44px;text-align:center;font:600 20px Georgia,serif;color:var(--gold)}
+.score small{display:block;font:11px -apple-system,sans-serif;color:var(--muted)}
+.empty{color:var(--muted);text-align:center;padding:40px 12px}
+/* form */
+.ft{font:600 22px Georgia,serif;margin:6px 0 12px}
+fieldset{border:0;padding:0;margin:0 0 18px}
+legend{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--wine);margin-bottom:6px}
+label{display:block;font-size:13px;color:var(--muted);margin:0 0 10px}
+label input,label select,label textarea{margin-top:4px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row.ev{grid-template-columns:1.6fr 1fr}
+.ai{background:var(--ai)!important;border-color:#e9cf7f!important}
+.photo{background:#fff;border:1px dashed #d6c9cb;border-radius:12px;padding:12px;margin-bottom:10px;text-align:center}
+.photo img{display:none;max-width:100%;max-height:220px;border-radius:8px;margin:0 auto 10px}
+.photo.has img{display:block}
+.photo-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.photo-actions label{margin:0;font-size:15px}
+.photo p{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.status{font-size:14px;background:#f1ecee;border-radius:10px;padding:8px 12px;margin:0 0 14px}
+.status.err{background:#fde8e6;color:#8a1c14}
+.status.ok{background:#e6f2e8;color:var(--ok)}
+.scorebox{display:flex;align-items:flex-end;gap:12px;margin:0 0 10px}
+.scorebox label{margin:0;flex:none;width:120px}
+.scorebox input{font:600 26px Georgia,serif;text-align:center;padding:8px}
+.band{color:var(--muted);font-size:14px;padding-bottom:12px}
+.savebar{position:fixed;left:0;right:0;bottom:0;background:rgba(250,247,245,.97);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center;z-index:4}
+.savebar button{flex:1;max-width:220px;padding:13px 8px}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom));background:var(--ink);color:#fff;padding:9px 16px;border-radius:20px;font-size:14px;z-index:9;max-width:90vw;text-align:center}
+/* connect */
+.connect h2{font:600 22px Georgia,serif;margin:10px 0 6px}
+.connect p{color:var(--muted);font-size:15px;margin:0 0 12px}
+.connect ol{padding-left:20px;color:var(--muted);font-size:15px;margin:0 0 14px}
+.connect textarea{font:13px ui-monospace,Menlo,monospace;word-break:break-all}
+.connect .actions{display:flex;gap:8px;margin:10px 0 18px}
+.connect .actions button{flex:1;padding:12px}
+.hgear{background:transparent;color:#fff;font-size:22px;padding:4px 6px;opacity:.85}
+/* detail */
+.dt{font:600 24px/1.2 Georgia,serif;margin:4px 0 2px}
+.ds{font:18px Georgia,serif;margin:0 0 8px}
+.dscore{font:600 32px Georgia,serif;color:var(--gold);margin:6px 0 12px}
+.dscore span{font:15px -apple-system,sans-serif;color:var(--muted);margin-left:6px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 14px;font-size:15px}
+.facts dt{color:var(--muted)}.facts dd{margin:0}
+#detail h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--wine);margin:16px 0 4px}
+.prose{white-space:pre-wrap;margin:0}
+</style>
+</head>
+<body>
+<header>
+  <button id="back" class="hbtn" hidden aria-label="Back">‹</button>
+  <h1>Tasting Notes</h1>
+  <button id="newBtn" class="btn-light">+ New</button>
+  <button id="gearBtn" class="hgear" aria-label="Settings">⚙︎</button>
+</header>
+<div id="mockBar" class="bar" hidden>Demo mode: notes are not saved to Drive.</div>
+<div id="syncBar" class="bar" hidden><span id="syncText"></span><button id="syncNow" type="button">Sync now</button></div>
+
+<main>
+  <!-- LIST -->
+  <section id="listView" class="view on">
+    <div id="installBanner" class="banner" hidden>Install as an app: tap <b>Share</b> (the square with an arrow), then <b>Add to Home Screen</b>.
+      <button id="hideInstall" type="button">OK</button></div>
+    <div id="draftBanner" class="banner" hidden>You have an unfinished note on this phone.
+      <button id="resumeDraft" type="button">Resume</button><button id="discardDraft" type="button">Discard</button></div>
+    <div class="controls">
+      <input id="search" type="search" placeholder="Search producer, region, event, notes…">
+      <select id="sort" aria-label="Sort">
+        <option value="date">Newest</option>
+        <option value="score">Top scored</option>
+        <option value="producer">Producer A–Z</option>
+      </select>
+    </div>
+    <p id="count" class="count"></p>
+    <div id="list"></div>
+  </section>
+
+  <!-- FORM -->
+  <section id="formView" class="view">
+    <form id="form" autocomplete="off">
+      <h2 id="formTitle" class="ft">New note</h2>
+
+      <div id="photoBox" class="photo">
+        <img id="photoPreview" alt="Label photo">
+        <div class="photo-actions">
+          <label class="btn">📷 Photo of label<input type="file" accept="image/*" capture="environment" id="camInput" hidden></label>
+          <label class="btn-ghost">From library<input type="file" accept="image/*" id="libInput" hidden></label>
+        </div>
+        <p>The photo is only used to identify the wine. It isn't kept.</p>
+      </div>
+      <p id="status" class="status" hidden></p>
+
+      <fieldset><legend>Event</legend>
+        <div class="row ev">
+          <label>Event<input name="eventName" list="eventList" placeholder="e.g. Burgundy dinner"></label>
+          <label>Date<input name="eventDate" type="date"></label>
+        </div>
+      </fieldset>
+
+      <fieldset><legend>Wine</legend>
+        <label>Producer<input name="producer" list="producerList"></label>
+        <label>Cuvée<input name="cuvee" placeholder="e.g. Les Clos"></label>
+        <div class="row">
+          <label>Vintage<input name="vintage" placeholder="2015 or NV" inputmode="text"></label>
+          <label>Colour<select name="colour"><option value=""></option><option>Red</option><option>White</option><option>Rosé</option><option>Sparkling</option><option>Sweet</option><option>Fortified</option><option>Orange</option></select></label>
+        </div>
+        <div class="row">
+          <label>Region<input name="region" list="regionList"></label>
+          <label>Appellation<input name="appellation" list="appList"></label>
+        </div>
+        <label>Country<input name="country" list="countryList"></label>
+      </fieldset>
+
+      <fieldset><legend>Tasting</legend>
+        <label>Nose<textarea name="nose" rows="2"></textarea></label>
+        <label>Palate<textarea name="palate" rows="2"></textarea></label>
+        <label>Overall impression<textarea name="overall" rows="2"></textarea></label>
+        <label>Note<textarea name="note" rows="3" placeholder="Grapes, food pairing, who poured it, drinking window…"></textarea></label>
+        <div class="scorebox">
+          <label>Score /100<input name="score" type="number" inputmode="numeric" min="50" max="100" step="1" placeholder="–"></label>
+          <span id="band" class="band"></span>
+        </div>
+        <label>Price (optional)<input name="price" placeholder="e.g. £85"></label>
+      </fieldset>
+
+      <button type="button" id="deleteBtn" class="btn-danger" hidden>Delete note</button>
+      <div class="savebar">
+        <button type="button" id="cancelBtn" class="btn-ghost">Cancel</button>
+        <button type="submit" id="saveBtn" class="btn-ghost" data-next="0">Save</button>
+        <button type="submit" id="saveNextBtn" class="btn" data-next="1">Save &amp; next</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- CONNECT -->
+  <section id="connectView" class="view connect">
+    <h2>Connect to your Google Drive</h2>
+    <p id="connState">Paste the connection code from your Google Apps Script project to link this app to your tasting notes.</p>
+    <ol>
+      <li>In Apps Script, run <b>connectPhone</b>.</li>
+      <li>Copy the code from the log and send it to yourself (Notes, email or message).</li>
+      <li>Copy it on your iPhone, then tap <b>Paste</b> below.</li>
+    </ol>
+    <textarea id="connCode" rows="4" placeholder="Connection code" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+    <div class="actions">
+      <button type="button" id="pasteBtn" class="btn-ghost">Paste</button>
+      <button type="button" id="connectBtn" class="btn">Connect</button>
+    </div>
+    <p id="connStatus" class="status" hidden></p>
+    <button type="button" id="disconnectBtn" class="btn-danger" hidden>Disconnect this phone</button>
+  </section>
+
+  <!-- DETAIL -->
+  <section id="detailView" class="view">
+    <div id="detail"></div>
+    <div class="savebar"><button type="button" id="editBtn" class="btn">Edit note</button></div>
+  </section>
+</main>
+<div id="toast" hidden></div>
+
+<datalist id="eventList"></datalist><datalist id="producerList"></datalist><datalist id="regionList"></datalist>
+<datalist id="appList"></datalist><datalist id="countryList"></datalist>
+
+<script>
+/* ================= API: your Google Apps Script back end (or ?demo) ================= */
+const DEMO = /[?&]demo\b/.test(location.search);
+const TIMEOUT = {getNotes: 20000, saveNote: 20000, deleteNote: 20000, identifyLabel: 45000, ping: 15000};
+let conn = null;
+
+async function call(action, args, c){
+  c = c || conn;
+  if (!c) throw Object.assign(new Error('This phone is not connected yet.'), {auth: true});
+  const ctrl = new AbortController(), t = setTimeout(() => ctrl.abort(), TIMEOUT[action] || 20000);
+  let res;
+  try {
+    // text/plain keeps this a "simple" request, which Apps Script accepts from another website.
+    res = await fetch(c.u, {method: 'POST', body: JSON.stringify({key: c.k, action, args}),
+      headers: {'Content-Type': 'text/plain;charset=utf-8'}, redirect: 'follow', signal: ctrl.signal});
+  } catch(e) { throw new Error('No connection'); }
+  finally { clearTimeout(t); }
+  let j;
+  try { j = await res.json(); }
+  catch(e) { throw Object.assign(new Error('Google refused the connection. Check the web app\'s access is set to "Anyone".'), {auth: true}); }
+  if (!j.ok) throw Object.assign(new Error(j.error || 'Something went wrong'), {auth: !!j.auth, server: true});
+  return j.data;
+}
+const api = DEMO ? mockApi() : new Proxy({}, {get: (_, fn) => (...args) => call(fn, args)});
+
+function parseCode(s){
+  try {
+    s = String(s || '').trim().replace(/^.*#c=/, '').replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    const o = JSON.parse(atob(s));
+    if (o && /^https:\/\//.test(o.u) && o.k) return {u: o.u, k: o.k};
+  } catch(e) {}
+  return null;
+}
+
+function mockApi() {
+  // Stands in for Google when the page is opened outside Apps Script. window.mockOffline simulates no signal.
+  const db = [];
+  const wait = v => new Promise((r, j) => setTimeout(() => window.mockOffline ? j(new Error('No connection')) : r(v), 300));
+  return {
+    getNotes: () => wait(db.map(n => ({...n}))),
+    saveNote: n => { const o = {...n, updated: new Date().toISOString()}; const i = db.findIndex(x => x.id === o.id); i >= 0 ? db[i] = o : db.push(o); return wait({...o}); },
+    deleteNote: id => { const i = db.findIndex(x => x.id === id); if (i >= 0) db.splice(i, 1); return wait(true); },
+    identifyLabel: () => wait({producer:'Domaine William Fèvre', cuvee:'Les Clos', vintage:'2019', colour:'White',
+      region:'Burgundy', appellation:'Chablis Grand Cru', country:'France', confidence:'high'})
+  };
+}
+
+/* ================= state & helpers ================= */
+const $ = s => document.querySelector(s);
+const FIELDS = ['eventName','eventDate','producer','cuvee','vintage','colour','region','appellation','country','nose','palate','overall','note','score','price'];
+const AI_FIELDS = ['producer','cuvee','vintage','colour','region','appellation','country'];
+const SEARCH_FIELDS = ['producer','cuvee','vintage','region','appellation','country','eventName','nose','palate','overall','note'];
+let serverNotes = [], notes = [], current = null, editing = null, label = null, dirty = false, syncing = false, lastErr = '';
+
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } },
+  set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e) { return false; } },
+  del(k){ try { localStorage.removeItem(k); } catch(e) {} }
+};
+const outbox = () => store.get('outbox') || [];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const errMsg = e => (e && e.message) || String(e);
+const uuid = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+  : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c === 'x' ? r : (r&3|8)).toString(16); });
+function today(){ const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+function fmtDate(s){ if (!s) return ''; const d = new Date(s + 'T12:00:00'); return isNaN(d) ? s : d.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}); }
+function colourClass(c){ return 'c-' + (({'Rosé':'rose'})[c] || String(c || 'none').toLowerCase()); }
+function band(s){
+  s = Number(s); if (!s) return '';
+  return s >= 98 ? 'Legendary' : s >= 95 ? 'Exceptional' : s >= 90 ? 'Outstanding' : s >= 85 ? 'Very good' : s >= 80 ? 'Good' : s >= 70 ? 'Average' : 'Below average';
+}
+
+function show(view){
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === view));
+  $('#newBtn').hidden = view !== 'listView';
+  $('#gearBtn').hidden = view !== 'listView';
+  $('#back').hidden = view === 'listView' || (view === 'connectView' && !conn);
+  if (view === 'listView') $('#draftBanner').hidden = !store.get('draft');
+  window.scrollTo(0, 0);
+}
+function status(msg, kind){ const s = $('#status'); s.textContent = msg || ''; s.className = 'status' + (kind ? ' ' + kind : ''); s.hidden = !msg; }
+let toastT;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2600); }
+
+/* ================= offline outbox & sync ================= */
+// Every save goes into an outbox on the phone first, then syncs to Drive in the background.
+function enqueue(note, img){
+  const q = outbox().filter(x => x.note.id !== note.id);
+  const prev = outbox().find(x => x.note.id === note.id);
+  q.push({note, label: img || (prev && prev.label) || null});
+  if (!store.set('outbox', q)) {           // phone storage full: drop label photos and try again
+    q.forEach(x => x.label = null);
+    if (!store.set('outbox', q)) return false;
+  }
+  return true;
+}
+
+function mergeNotes(){
+  const pending = outbox().map(x => Object.assign({}, x.note, {_pending: true, _needsId: !!x.label}));
+  const ids = new Set(pending.map(n => n.id));
+  notes = pending.concat(serverNotes.filter(n => !ids.has(n.id)));
+}
+
+function updateSyncBar(offline){
+  const n = outbox().length, bar = $('#syncBar');
+  if (!n && !offline && !lastErr) { bar.hidden = true; return; }
+  bar.hidden = false;
+  bar.classList.toggle('off', !!offline);
+  const w = n === 1 ? '1 note' : n + ' notes';
+  if (lastErr && !syncing) { bar.classList.add('off'); $('#syncText').textContent = (n ? `${w} waiting to sync. ` : '') + lastErr; $('#syncNow').hidden = !n; return; }
+  $('#syncText').textContent = syncing ? `Syncing ${w}…`
+    : n ? `${w} saved on this phone, waiting to sync${offline ? ' (no signal)' : ''}`
+    : 'No signal: showing notes saved on this phone';
+  $('#syncNow').hidden = syncing || !n;
+}
+
+async function sync(){
+  if (syncing || !outbox().length) { updateSyncBar(); return; }
+  syncing = true; lastErr = ''; updateSyncBar();
+  let offline = false, done = 0;
+  try {
+    for (const item of outbox()) {
+      const note = Object.assign({}, item.note);
+      if (item.label) {                      // label photo taken with no signal: read it now
+        try { fillEmpty(note, await api.identifyLabel(item.label)); } catch(e) { /* save anyway */ }
+      }
+      try {
+        const saved = await api.saveNote(note);
+        // Remove from the outbox only if it wasn't edited again while syncing.
+        const q = outbox(), cur = q.find(x => x.note.id === note.id);
+        if (cur && cur.note._v === item.note._v) store.set('outbox', q.filter(x => x.note.id !== note.id));
+        const i = serverNotes.findIndex(x => x.id === saved.id);
+        i >= 0 ? serverNotes[i] = saved : serverNotes.unshift(saved);
+        done++;
+      } catch(e) { offline = true; lastErr = (e.auth || e.server) ? errMsg(e) : ''; break; }
+    }
+  } finally {
+    syncing = false;
+    store.set('notesCache', serverNotes);
+    mergeNotes(); refreshAll();
+    updateSyncBar(offline);
+    if (done && !offline) toast(done === 1 ? 'Note synced to Drive' : `${done} notes synced to Drive`);
+  }
+  if (!offline && done && outbox().length) setTimeout(sync, 500);   // notes saved while this sync ran
+}
+
+function fillEmpty(note, r){
+  AI_FIELDS.forEach(k => {
+    const v = r && r[k] != null ? String(r[k]).trim() : '';
+    if (v && !String(note[k] || '').trim()) note[k] = v;
+  });
+}
+
+/* ================= list ================= */
+async function loadNotes(){
+  serverNotes = store.get('notesCache') || [];
+  mergeNotes();
+  if (notes.length) refreshAll(); else $('#list').innerHTML = '<p class="empty">Loading…</p>';
+  try {
+    serverNotes = await api.getNotes();
+    store.set('notesCache', serverNotes);
+    lastErr = '';
+    mergeNotes(); refreshAll(); updateSyncBar();
+    sync();
+  } catch(e) {
+    lastErr = (e.auth || e.server) ? errMsg(e) : '';
+    mergeNotes(); refreshAll(); updateSyncBar(true);
+  }
+}
+
+function refreshAll(){ renderList(); refreshSuggestions(); }
+
+function renderList(){
+  const q = $('#search').value.trim().toLowerCase(), sort = $('#sort').value;
+  const arr = notes.filter(n => !q || SEARCH_FIELDS.some(k => String(n[k] || '').toLowerCase().includes(q)));
+  const byDate = (a, b) => (b.eventDate || '').localeCompare(a.eventDate || '') || (b.created || '').localeCompare(a.created || '');
+  if (sort === 'score') arr.sort((a, b) => (Number(b.score) || 0) - (Number(a.score) || 0) || byDate(a, b));
+  else if (sort === 'producer') arr.sort((a, b) => (a.producer || '').localeCompare(b.producer || '') || String(a.vintage).localeCompare(String(b.vintage)));
+  else arr.sort(byDate);
+
+  $('#count').textContent = notes.length ? `${arr.length} ${arr.length === 1 ? 'wine' : 'wines'}` : '';
+  if (!arr.length) {
+    $('#list').innerHTML = notes.length ? '<p class="empty">No matches.</p>'
+      : '<p class="empty">No notes yet.<br>Tap <b>+ New</b> at your next tasting.</p>';
+    return;
+  }
+  let html = '', lastGroup = null;
+  for (const n of arr) {
+    if (sort === 'date') {
+      const g = (n.eventName || '') + '|' + (n.eventDate || '');
+      if (g !== lastGroup) { html += `<div class="group"><span>${esc(n.eventName || 'No event')}</span><span>${esc(fmtDate(n.eventDate))}</span></div>`; lastGroup = g; }
+    }
+    html += cardHTML(n);
+  }
+  $('#list').innerHTML = html;
+}
+
+function cardHTML(n){
+  const sub = [n.cuvee, n.vintage].filter(Boolean).join(' · ');
+  const meta = [n.appellation || n.region, n.colour].filter(Boolean).join(' · ');
+  const pend = n._pending ? `<span class="pend">⏳ Waiting to sync${n._needsId ? ' · label will be read' : ''}</span>` : '';
+  return `<button class="card" data-id="${esc(n.id)}"><span class="dot ${colourClass(n.colour)}"></span><span class="ci">
+    <span class="pr">${esc(n.producer || (n._needsId ? 'Label to be read' : 'Unknown producer'))}</span>
+    ${sub ? `<span class="cu">${esc(sub)}</span>` : ''}
+    ${meta ? `<span class="meta">${esc(meta)}</span>` : ''}${pend}</span>
+    ${n.score !== '' && n.score != null ? `<span class="score">${esc(n.score)}<small>/100</small></span>` : ''}</button>`;
+}
+
+function refreshSuggestions(){
+  const map = {eventList:'eventName', producerList:'producer', regionList:'region', appList:'appellation', countryList:'country'};
+  for (const [id, k] of Object.entries(map)) {
+    const vals = [...new Set(notes.map(n => n[k]).filter(Boolean))].sort();
+    $('#' + id).innerHTML = vals.map(v => `<option value="${esc(v)}">`).join('');
+  }
+}
+
+/* ================= detail ================= */
+function openDetail(id){
+  const n = notes.find(x => x.id === id); if (!n) return show('listView');
+  current = n;
+  const title = [n.cuvee, n.vintage].filter(Boolean).join(' · ');
+  const facts = [['Colour', n.colour], ['Region', n.region], ['Appellation', n.appellation], ['Country', n.country],
+    ['Price', n.price], ['Event', [n.eventName, fmtDate(n.eventDate)].filter(Boolean).join(' · ')]].filter(f => f[1]);
+  const secs = [['Nose', n.nose], ['Palate', n.palate], ['Overall impression', n.overall], ['Note', n.note]].filter(s => s[1]);
+  $('#detail').innerHTML =
+    (n._pending ? `<p class="status">⏳ Saved on this phone, waiting to sync to Drive${n._needsId ? '. The label will be read when it syncs' : ''}.</p>` : '') +
+    `<h2 class="dt">${esc(n.producer || 'Unknown producer')}</h2>` +
+    (title ? `<p class="ds">${esc(title)}</p>` : '') +
+    (n.score !== '' && n.score != null ? `<div class="dscore">${esc(n.score)}<span>/100 · ${band(n.score)}</span></div>` : '') +
+    (facts.length ? `<dl class="facts">${facts.map(f => `<dt>${f[0]}</dt><dd>${esc(f[1])}</dd>`).join('')}</dl>` : '') +
+    secs.map(s => `<h3>${s[0]}</h3><p class="prose">${esc(s[1])}</p>`).join('');
+  show('detailView');
+}
+
+/* ================= form ================= */
+function newDefaults(){
+  const le = store.get('lastEvent');
+  return le && le.date === today() ? {eventName: le.name, eventDate: le.date} : {eventDate: today()};
+}
+
+function setPreview(src){ $('#photoPreview').src = src || ''; $('#photoBox').classList.toggle('has', !!src); }
+
+function openForm(n, draft){
+  editing = n ? Object.assign({}, n) : null;
+  label = draft && draft.label || null;
+  const f = $('#form'); f.reset();
+  const d = draft || n || newDefaults();
+  FIELDS.forEach(k => { f.elements[k].value = d[k] ?? ''; f.elements[k].classList.remove('ai'); });
+  $('#band').textContent = band(f.elements.score.value);
+  setPreview(label ? 'data:image/jpeg;base64,' + label : '');
+  $('#deleteBtn').hidden = !editing;
+  $('#saveNextBtn').hidden = !!editing;
+  $('#saveBtn').className = editing ? 'btn' : 'btn-ghost';
+  $('#formTitle').textContent = editing ? 'Edit note' : 'New note';
+  status(label ? 'Label photo waiting to be read. It will be read when you have signal.' : '');
+  dirty = !!draft;
+  show('formView');
+}
+
+function collect(){
+  const f = $('#form'), o = {};
+  FIELDS.forEach(k => o[k] = f.elements[k].value.trim());
+  if (o.score !== '') o.score = Math.max(0, Math.min(100, Math.round(Number(o.score)))) || '';
+  return o;
+}
+
+function saveDraft(){
+  dirty = true;
+  if (!store.set('draft', Object.assign(collect(), {label, editing}))) store.set('draft', Object.assign(collect(), {editing}));
+}
+
+function loadImage(file){
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => { URL.revokeObjectURL(url); res(img); };
+    img.onerror = () => rej(new Error('Could not open that image'));
+    img.src = url;
+  });
+}
+function resize(img, max, q){
+  const s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', q).split(',')[1];
+}
+
+async function onPhoto(file){
+  if (!file) return;
+  status('Reading the label…');
+  let img;
+  try { img = await loadImage(file); } catch(e) { status(errMsg(e), 'err'); return; }
+  const b64 = resize(img, 1024, .8);
+  setPreview('data:image/jpeg;base64,' + b64);
+  const forId = editing ? editing.id : 'new';
+  try {
+    const r = await api.identifyLabel(b64);
+    if ((editing ? editing.id : 'new') !== forId || !$('#formView').classList.contains('on')) return;
+    label = null;
+    const n = fillFromAI(r);
+    const conf = r && r.confidence && r.confidence !== 'high' ? ` (${r.confidence} confidence)` : '';
+    status(n ? `Filled ${n} field${n > 1 ? 's' : ''} from the label${conf}. Check the highlighted ones.` : 'Label read, but there was nothing new to fill in.', 'ok');
+    saveDraft();
+  } catch(e) {
+    // Keep a small copy on the phone only until it can be read, then it is discarded.
+    label = resize(img, 800, .7);
+    saveDraft();
+    status('No signal. The label will be read automatically when you\'re back online. Carry on with your note and save as normal.');
+  }
+}
+
+function fillFromAI(r){
+  const f = $('#form'); let count = 0;
+  AI_FIELDS.forEach(k => {
+    const v = r && r[k] != null ? String(r[k]).trim() : '';
+    const el = f.elements[k];
+    if (!v || el.value.trim()) return;
+    if (k === 'colour' && ![...el.options].some(o => o.value === v)) return;
+    el.value = v; el.classList.add('ai'); count++;
+  });
+  return count;
+}
+
+function save(e){
+  e.preventDefault();
+  const next = e.submitter ? e.submitter.dataset.next === '1' : false;
+  const data = collect();
+  if (!data.producer && !data.cuvee && !label) { status('Add a producer, cuvée or label photo first.', 'err'); return; }
+  const now = new Date().toISOString();
+  const base = editing ? Object.assign({}, editing) : {id: uuid(), created: now};
+  delete base._pending; delete base._needsId;
+  const note = Object.assign(base, data, {_v: now});
+  if (!enqueue(note, label)) { status('This phone\'s storage is full, so the note couldn\'t be saved. Try again with signal.', 'err'); return; }
+
+  store.del('draft'); dirty = false;
+  if (data.eventName || data.eventDate) store.set('lastEvent', {name: data.eventName, date: data.eventDate});
+  mergeNotes(); refreshAll(); updateSyncBar();
+  sync();
+
+  if (next) { openForm(null); toast('Saved. Next wine'); }
+  else openDetail(note.id);
+}
+
+function leaveForm(){
+  if (dirty && !confirm('Discard your changes to this note?')) return;
+  store.del('draft'); dirty = false; label = null;
+  if (editing) openDetail(editing.id); else show('listView');
+}
+
+async function del(){
+  if (!editing || !confirm('Delete this note?')) return;
+  const id = editing.id, wasPending = outbox().some(x => x.note.id === id);
+  const onServer = serverNotes.some(n => n.id === id);
+  store.set('outbox', outbox().filter(x => x.note.id !== id));
+  if (onServer) {
+    try { await api.deleteNote(id); }
+    catch(e) { status('Deleting a synced note needs signal. Try again when you\'re online.', 'err'); if (wasPending) mergeNotes(); return; }
+    serverNotes = serverNotes.filter(n => n.id !== id);
+    store.set('notesCache', serverNotes);
+  }
+  store.del('draft'); dirty = false;
+  mergeNotes(); refreshAll(); updateSyncBar(); show('listView');
+}
+
+/* ================= wiring ================= */
+$('#newBtn').onclick = () => openForm(null);
+$('#back').onclick = () => $('#formView').classList.contains('on') ? leaveForm() : show('listView');
+$('#cancelBtn').onclick = leaveForm;
+$('#editBtn').onclick = () => current && openForm(current);
+$('#deleteBtn').onclick = del;
+$('#form').onsubmit = save;
+$('#form').addEventListener('input', e => {
+  e.target.classList && e.target.classList.remove('ai');
+  if (e.target.name === 'score') $('#band').textContent = band(e.target.value);
+  if (e.target.type !== 'file') saveDraft();
+});
+$('#form').elements.eventName.addEventListener('change', e => {
+  const match = notes.find(n => n.eventName === e.target.value && n.eventDate);
+  if (match) { $('#form').elements.eventDate.value = match.eventDate; saveDraft(); }
+});
+$('#camInput').onchange = e => { onPhoto(e.target.files[0]); e.target.value = ''; };
+$('#libInput').onchange = e => { onPhoto(e.target.files[0]); e.target.value = ''; };
+$('#list').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) openDetail(c.dataset.id); });
+$('#search').addEventListener('input', renderList);
+$('#sort').addEventListener('change', renderList);
+$('#resumeDraft').onclick = () => { const d = store.get('draft'); if (d) openForm(d.editing || null, d); };
+$('#discardDraft').onclick = () => { store.del('draft'); $('#draftBanner').hidden = true; };
+$('#syncNow').onclick = sync;
+
+// Retry syncing whenever signal returns, the app comes back to the foreground, or every 20 seconds.
+window.addEventListener('online', sync);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); });
+setInterval(() => { if (outbox().length) sync(); }, 20000);
+
+/* ================= connect & start ================= */
+function openConnect(msg){
+  $('#connState').textContent = conn ? 'This phone is connected to your tasting notes. To switch to a new code, paste it below.'
+    : 'Paste the connection code from your Google Apps Script project to link this app to your tasting notes.';
+  $('#disconnectBtn').hidden = !conn;
+  $('#connCode').value = '';
+  const st = $('#connStatus'); st.textContent = msg || ''; st.className = 'status err'; st.hidden = !msg;
+  show('connectView');
+}
+async function tryConnect(code){
+  const st = $('#connStatus'), c = parseCode(code);
+  if (!c) { st.textContent = 'That doesn\'t look like a connection code. Copy the whole code from the Apps Script log.'; st.className = 'status err'; st.hidden = false; return; }
+  st.textContent = 'Connecting…'; st.className = 'status'; st.hidden = false;
+  try { await call('ping', [], c); }
+  catch(e) { st.textContent = 'Couldn\'t connect: ' + errMsg(e); st.className = 'status err'; return; }
+  conn = c; store.set('conn', c); lastErr = '';
+  st.hidden = true; show('listView'); loadNotes(); maybeInstallHint();
+}
+function maybeInstallHint(){
+  const standalone = window.navigator.standalone || matchMedia('(display-mode: standalone)').matches;
+  $('#installBanner').hidden = standalone || DEMO || !conn || store.get('hideInstall');
+}
+
+$('#gearBtn').onclick = () => openConnect();
+$('#pasteBtn').onclick = async () => {
+  try { $('#connCode').value = await navigator.clipboard.readText(); }
+  catch(e) { $('#connCode').focus(); }
+};
+$('#connectBtn').onclick = () => tryConnect($('#connCode').value);
+$('#disconnectBtn').onclick = () => {
+  if (outbox().length && !confirm(`${outbox().length} note(s) haven't synced yet and will stay on this phone until you reconnect. Disconnect anyway?`)) return;
+  if (!outbox().length && !confirm('Disconnect this phone from your tasting notes?')) return;
+  conn = null; store.del('conn'); store.del('notesCache'); serverNotes = []; mergeNotes(); refreshAll(); updateSyncBar(); openConnect();
+};
+$('#hideInstall').onclick = () => { store.set('hideInstall', true); $('#installBanner').hidden = true; };
+
+// Retry syncing whenever signal returns, the app comes back to the foreground, or every 20 seconds.
+window.addEventListener('online', sync);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); });
+setInterval(() => { if (outbox().length) sync(); }, 20000);
+
+// Works offline once installed: the app's files are kept on the phone.
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
+
+(function start(){
+  $('#mockBar').hidden = !DEMO;
+  conn = DEMO ? {u: 'demo', k: 'demo'} : store.get('conn');
+  // A link ending in #c=CODE connects automatically (applied once, so a later pasted code isn't overridden).
+  const m = location.hash.match(/#c=([^&]+)/);
+  if (!DEMO && m && m[1] !== store.get('hashUsed')) {
+    const c = parseCode(m[1]);
+    if (c) { conn = c; store.set('conn', c); store.set('hashUsed', m[1]); }
+  }
+  $('#draftBanner').hidden = !store.get('draft');
+  if (!conn) { openConnect(); return; }
+  show('listView'); maybeInstallHint(); loadNotes();
+})();
+</script>
+</body>
+</html>
